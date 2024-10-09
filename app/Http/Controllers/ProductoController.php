@@ -6,6 +6,8 @@ use App\Models\Producto;
 use App\Models\Categoria; 
 use Illuminate\Http\Request;
 use Barryvdh\DomPDF\Facade\PDF;
+use App\Exports\ProductosExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ProductoController extends Controller
 {
@@ -22,7 +24,7 @@ class ProductoController extends Controller
         ->get(); // Convierte los datos extraidos de la BD en un Array
         // Retornamos una vista y enviamos la variable "productos"
         //dd($productos);
-        return view('panel.vendedor.lista_productos.index', compact('productos'));
+        return view('panel.vendedor.listaProductos.index', compact('productos'));
     }
 
     /**
@@ -36,7 +38,7 @@ class ProductoController extends Controller
         // Recuperamos todas las categorías de la BD
         $categorias = Categoria::get(); // Recordar importar el modelo Categoria!!
         // Retornamos la vista de creación de productos, enviamos el producto y las categorías
-        return view('panel.vendedor.lista_productos.create', compact('producto', 'categorias'));
+        return view('panel.vendedor.listaProductos.create', compact('producto', 'categorias'));
     }
     
 
@@ -72,7 +74,7 @@ class ProductoController extends Controller
     public function show(Producto $producto)
     {
         
-        return view('panel.vendedor.lista_productos.show', compact('producto'));
+        return view('panel.vendedor.listaProductos.show', compact('producto'));
     }
 
 
@@ -82,7 +84,7 @@ class ProductoController extends Controller
     public function edit(Producto $producto)
     {
         $categorias = Categoria::get();
-         return view('panel.vendedor.lista_productos.edit', compact('producto',
+         return view('panel.vendedor.listaProductos.edit', compact('producto',
         'categorias'));
 
     }
@@ -123,13 +125,21 @@ class ProductoController extends Controller
     }
     public function generatePDF()
     {
-        $data = [
-        'title' => 'Ficha del Usuario',
-        'heading' => 'Datos Personales',
-        'content' => 'Aquí deberían recuperarse los datos del
-                    usuario desde la Base de Datos.'
-        ];
-        $pdf = PDF::loadView('panel/vendedor/lista_productos/myPDF', $data);
+        $producto = Producto::get(); 
 
-        return $pdf->download('miarchivo.pdf');}   
+        $data = [
+        'title' => 'Lista de Productos',
+        'heading' => 'esta es la tabla de profductos',
+        'content' => $producto
+        ];
+         
+        $pdf = PDF::loadView('panel.vendedor.listaProductos.mypdf', $data);
+        
+        return $pdf->download('miarchivo.pdf');
+    } 
+
+    public function export()
+    {
+        return Excel::download(new ProductosExport, 'productos.xlsx');
+    }  
 }

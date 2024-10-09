@@ -20,7 +20,7 @@
             </a>
             <a href="{{ route('producto.reportPDF') }}" class="btn btn-success text-uppercase"> PDF </a> 
             <a class="btn btn-warning float-end"
-                href="{{ route('users.export') }}">Exportar Datos de Usuarios</a>
+                href="{{ route('producto.export') }}">Exportar Productos exel </a>
         </div>
         
         @if(session('alert'))
